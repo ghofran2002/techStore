@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Votre panier{% endblock %}
+
+{% block body %}
+    <div class="section-heading section-heading--compact text-start">
+        <p class="eyebrow">Panier</p>
+        <h1>Votre panier</h1>
+        <p>Retrouve ici les produits ajoutés avant de finaliser l’achat.</p>
+    </div>
+
+    {% if items is empty %}
+        <div class="empty-state text-center">
+            <h3>Ton panier est vide</h3>
+            <p class="mb-4">Ajoute un produit depuis le catalogue pour commencer.</p>
+            <a href="{{ path('product_index') }}" class="btn btn-brand">Voir les produits</a>
+        </div>
+    {% else %}
+        <div class="row g-4">
+            <div class="col-12 col-lg-8">
+                <div class="cart-list">
+                    {% for item in items %}
+                        {% set product = item.product %}
+                        <article class="cart-item">
+                            <div class="cart-item__media">
+                                <img src="{{ product.image }}" alt="{{ product.name }}">
+                            </div>
+                            <div class="cart-item__content">
+                                <div>
+                                    <p class="product-card__category mb-2">Produit sélectionné</p>
+                                    <h2 class="h5 mb-2">{{ product.name }}</h2>
+                                    <p class="mb-0 text-light-emphasis">Quantité : {{ item.quantity }}</p>
+                                </div>
+                                <div class="cart-item__meta">
+                                    <p class="cart-item__price mb-2">{{ item.lineTotal|number_format(2, ',', ' ') }} DT</p>
+                                    <form method="post" action="{{ path('cart_remove', {id: product.id}) }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('cart_remove_' ~ product.id) }}">
+                                        <button type="submit" class="btn btn-outline-light btn-sm">Retirer</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <aside class="cart-summary">
+                    <p class="eyebrow">Résumé</p>
+                    <h2 class="h4">Total</h2>
+                    <p class="cart-summary__total">{{ total|number_format(2, ',', ' ') }} DT</p>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <a href="{{ path('product_index') }}" class="btn btn-brand">Continuer mes achats</a>
+                        <form method="post" action="{{ path('cart_clear') }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('cart_clear') }}">
+                            <button type="submit" class="btn btn-outline-light w-100">Vider le panier</button>
+                        </form>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

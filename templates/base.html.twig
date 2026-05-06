@@ -2,81 +2,69 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101828">
     <title>{% block title %}Tech Store - E-commerce{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-
-
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .navbar-custom {
-            background-color: #343a40;
-        }
-        .navbar-custom .nav-link {
-            color: white;
-        }
-        .navbar-custom .nav-link:hover {
-            color: #ffc107;
-        }
-        footer {
-            background-color: #212529;
-        }
-        footer a {
-            color: #ffc107;
-            text-decoration: none;
-        }
-        footer a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    {{ importmap('app') }}
 </head>
-<body>
+<body class="site-body">
+    <div class="site-background"></div>
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-custom mb-4">
-        <div class="container d-flex flex-column align-items-center">
-            <a class="navbar-brand text-white mb-2" href="{{ path('home') }}">Tech Store</a>
-            <div class="collapse navbar-collapse justify-content-center">
-                <ul class="navbar-nav">
+    <nav class="navbar navbar-expand-lg navbar-dark site-nav sticky-top">
+        <div class="container">
+            <a class="navbar-brand brand-mark" href="{{ path('home') }}">
+                <span class="brand-mark__icon">T</span>
+                <span>Tech Store</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavigation" aria-controls="mainNavigation" aria-expanded="false" aria-label="Basculer la navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNavigation">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                    <li class="nav-item"><a class="nav-link" href="{{ path('home') }}">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ path('product_index') }}">Produits</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ path('category_index') }}">Catégories</a></li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('home') }}">Accueil</a>
+                        <a class="nav-link" href="{{ path('cart_index') }}">
+                            Panier
+                            {% set cartCount = app.session is defined and app.session is not null ? app.session.get('cart')|default({})|length : 0 %}
+                            {% if cartCount > 0 %}
+                                <span class="cart-badge">{{ cartCount }}</span>
+                            {% endif %}
+                        </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('product_index') }}">Produits</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_register') }}">inscription</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_login') }}">login</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{{ path('app_register') }}">Inscription</a></li>
+                    <li class="nav-item"><a class="nav-link nav-link--accent" href="{{ path('app_login') }}">Connexion</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="container mb-5">
+    <main class="container py-5 site-main">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label == 'error' ? 'danger' : label }} border-0 shadow-sm">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
         {% block body %}{% endblock %}
     </main>
 
-    <!-- Footer -->
-    <footer class="text-white text-center py-4">
-        <div class="container">
-            <p class="mb-1">&copy; {{ "now"|date("Y") }} Tech Store. Tous droits réservés.</p>
-            <p class="mb-0">Contact : 
-                <a href="mailto:ghofranmejaouel@gmail.com">ghofranmejaouel@gmail.com</a>
-            </p>
+    <footer class="site-footer py-4">
+        <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <p class="mb-0">&copy; {{ "now"|date("Y") }} Tech Store. Tous droits réservés.</p>
+            <p class="mb-0">Contact : <a href="mailto:khouloud_farkaoui@gmail.com">khouloud_farkaoui@gmail.com</a></p>
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    {% block javascripts %}{% endblock %}
 </body>
 </html>

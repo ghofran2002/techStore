@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ category.name }}{% endblock %}
+
+{% block body %}
+    <div class="section-heading section-heading--compact">
+        <p class="eyebrow">Catégorie</p>
+        <h1>{{ category.name }}</h1>
+        <p>Produits dans cette catégorie.</p>
+    </div>
+
+    <div class="row g-4">
+        {% for product in products %}
+            <div class="col-12 col-md-6 col-xl-4">
+                <article class="card product-card h-100">
+                    <div class="product-card__media product-card__media--tall">
+                        <img src="{{ product.image }}" class="card-img-top" alt="{{ product.name }}">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <p class="product-card__category mb-2">En stock</p>
+                        <h2 class="h5 card-title mb-2">{{ product.name }}</h2>
+                        <p class="product-card__price mb-4">{{ product.price }} DT</p>
+                        <a href="{{ path('product_show', {id: product.id}) }}" class="btn btn-brand mt-auto">Voir le produit</a>
+                    </div>
+                </article>
+            </div>
+        {% else %}
+            <div class="col-12 text-center">
+                <p class="text-muted">Aucun produit dans cette catégorie.</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

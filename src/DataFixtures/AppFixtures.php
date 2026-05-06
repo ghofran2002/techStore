@@ -1,7 +1,9 @@
 <?php
 
-use App\Entity\Category;
+namespace App\DataFixtures;
+
 use App\Entity\Product;
+use App\Entity\Category;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
@@ -12,21 +14,26 @@ class AppFixtures extends Fixture
     {
         $faker = Factory::create();
 
-        for ($i = 1; $i <= 5; $i++) {
-            $category = new Category();
-            $category->setName($faker->word);
-            $manager->persist($category);
+        // create some categories
+        $categories = [];
+        $categoryNames = ['Smartphones', 'Ordinateurs', 'Audio', 'Maison connectée', 'Gaming'];
+        foreach ($categoryNames as $name) {
+            $c = new Category();
+            $c->setName($name);
+            $manager->persist($c);
+            $categories[] = $c;
+        }
 
-            for ($j = 1; $j <= 10; $j++) {
-                $product = new Product();
-                $product->setName($faker->word);
-                $product->setDescription($faker->paragraph);
-                $product->setPrice($faker->randomFloat(2, 5, 500));
-                
-                $product->setImage($faker->image(640, 480, 'technics', true));
-                
-                $manager->persist($product);
-            }
+        for ($i = 1; $i <= 50; $i++) {
+            $product = new Product();
+            $product->setName($faker->words(3, true));
+            $product->setDescription($faker->paragraph());
+            $product->setPrice($faker->randomFloat(2, 5, 500));
+            $product->setImage(sprintf('https://picsum.photos/seed/%s/640/480', $faker->uuid()));
+            // assign random category
+            $product->setCategory($categories[array_rand($categories)]);
+
+            $manager->persist($product);
         }
 
         $manager->flush();
